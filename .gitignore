@@ -56,3 +56,6 @@ lib/
 
 # Documentation build
 docs/_build/
+
+# CodeQL temp files
+_codeql_detected_source_root
