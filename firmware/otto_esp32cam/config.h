@@ -6,6 +6,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 // ═══════════════════ WIFI SETTINGS / WIFI AYARLARI ═══════════════════
+// ⚠️ IMPORTANT: Change these values before uploading!
+// ⚠️ ÖNEMLİ: Yüklemeden önce bu değerleri değiştirin!
 const char* WIFI_SSID = "your_wifi_ssid";      // Your WiFi name / WiFi adınız
 const char* WIFI_PASS = "your_wifi_password";  // Your WiFi password / WiFi şifreniz
 

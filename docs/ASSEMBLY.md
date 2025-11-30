@@ -66,18 +66,27 @@ Bu dokümanda ESP32-CAM OTTO robot için adım adım montaj talimatları yer alm
 3. Çalışmayan servoları işaretleyin
 
 ```cpp
-// Servo test kodu
-#include <ESP32Servo.h>
-Servo testServo;
+// Servo test kodu - ESP32 PWM kullanarak
+// Servo test code - Using ESP32 PWM
 
 void setup() {
-  testServo.attach(12); // Test edilecek pin
+  // PWM kanalını ayarla / Setup PWM channel
+  ledcSetup(0, 50, 16);  // Kanal 0, 50Hz, 16-bit çözünürlük
+  ledcAttachPin(12, 0);  // GPIO 12'yi kanal 0'a bağla
 }
 
 void loop() {
-  testServo.write(0);   delay(1000);
-  testServo.write(90);  delay(1000);
-  testServo.write(180); delay(1000);
+  // 0° pozisyonu / 0 degree position
+  ledcWrite(0, 1638);  // ~500us pulse
+  delay(1000);
+  
+  // 90° pozisyonu / 90 degree position  
+  ledcWrite(0, 4915);  // ~1500us pulse
+  delay(1000);
+  
+  // 180° pozisyonu / 180 degree position
+  ledcWrite(0, 8192);  // ~2500us pulse
+  delay(1000);
 }
 ```
 

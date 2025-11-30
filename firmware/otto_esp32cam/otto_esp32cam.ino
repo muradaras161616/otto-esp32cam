@@ -34,8 +34,18 @@
 #define PIN_BUZZER 2 // Passive buzzer
 #define PIN_BUTTON 4 // Cherry MX button
 
+// PWM channels for servos and buzzer
+// Servo ve buzzer için PWM kanalları
+#define PWM_CHANNEL_YL 0     // Left leg PWM channel
+#define PWM_CHANNEL_YR 1     // Right leg PWM channel
+#define PWM_CHANNEL_RL 2     // Left foot PWM channel
+#define PWM_CHANNEL_RR 3     // Right foot PWM channel
+#define PWM_CHANNEL_BUZZER 4 // Buzzer PWM channel
+
 // I2C pins for OLED (using UART pins - disable serial for OLED)
 // OLED için I2C pinleri (UART pinleri kullanılıyor - OLED için serial kapatılır)
+// NOTE: This disables Serial debugging. Use GPIO 21/22 for I2C if debugging needed.
+// NOT: Bu Serial debug'ı devre dışı bırakır. Debug gerekirse GPIO 21/22 kullanın.
 #define PIN_SDA 3    // OLED I2C Data (GPIO 3 - U0RXD)
 #define PIN_SCL 1    // OLED I2C Clock (GPIO 1 - U0TXD)
 
@@ -225,6 +235,7 @@ void handleStatus();
 void showEyes(const unsigned char* leftEye, const unsigned char* rightEye);
 void showText(String line1, String line2, String line3);
 void resetEyes();
+void blinkEyes();
 void beep(int frequency, int duration);
 void moveServo(int servo, int position);
 void home();
@@ -479,16 +490,17 @@ void blinkEyes() {
 
 // ═══════════════════ SERVO FUNCTIONS / SERVO FONKSİYONLARI ═══════════════════
 void initServos() {
-  // Initialize PWM channels for servos
-  ledcSetup(0, 50, 16); // YL
-  ledcSetup(1, 50, 16); // YR
-  ledcSetup(2, 50, 16); // RL
-  ledcSetup(3, 50, 16); // RR
+  // Initialize PWM channels for servos (50Hz, 16-bit resolution)
+  // PWM kanallarını servolar için başlat (50Hz, 16-bit çözünürlük)
+  ledcSetup(PWM_CHANNEL_YL, 50, 16);
+  ledcSetup(PWM_CHANNEL_YR, 50, 16);
+  ledcSetup(PWM_CHANNEL_RL, 50, 16);
+  ledcSetup(PWM_CHANNEL_RR, 50, 16);
   
-  ledcAttachPin(PIN_YL, 0);
-  ledcAttachPin(PIN_YR, 1);
-  ledcAttachPin(PIN_RL, 2);
-  ledcAttachPin(PIN_RR, 3);
+  ledcAttachPin(PIN_YL, PWM_CHANNEL_YL);
+  ledcAttachPin(PIN_YR, PWM_CHANNEL_YR);
+  ledcAttachPin(PIN_RL, PWM_CHANNEL_RL);
+  ledcAttachPin(PIN_RR, PWM_CHANNEL_RR);
   
   // Move to home position
   home();
@@ -500,10 +512,10 @@ void moveServo(int servo, int position) {
   
   // Apply trim values
   switch(servo) {
-    case 0: position += TRIM_YL; break;
-    case 1: position += TRIM_YR; break;
-    case 2: position += TRIM_RL; break;
-    case 3: position += TRIM_RR; break;
+    case PWM_CHANNEL_YL: position += TRIM_YL; break;
+    case PWM_CHANNEL_YR: position += TRIM_YR; break;
+    case PWM_CHANNEL_RL: position += TRIM_RL; break;
+    case PWM_CHANNEL_RR: position += TRIM_RR; break;
   }
   
   // Convert angle to PWM duty cycle
@@ -772,9 +784,14 @@ void checkButton() {
 // ═══════════════════ SOUND FUNCTIONS / SES FONKSİYONLARI ═══════════════════
 void beep(int frequency, int duration) {
   #if BUZZER_ENABLED
-  tone(PIN_BUZZER, frequency, duration);
+  // ESP32 compatible tone using ledcWrite
+  // ESP32 uyumlu ton üretimi ledcWrite ile
+  ledcSetup(PWM_CHANNEL_BUZZER, frequency, 8);  // 8-bit resolution
+  ledcAttachPin(PIN_BUZZER, PWM_CHANNEL_BUZZER);
+  ledcWrite(PWM_CHANNEL_BUZZER, 128);  // 50% duty cycle for tone
   delay(duration);
-  noTone(PIN_BUZZER);
+  ledcWrite(PWM_CHANNEL_BUZZER, 0);    // Stop tone
+  ledcDetachPin(PIN_BUZZER);
   #endif
 }
 
