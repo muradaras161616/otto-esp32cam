@@ -1,0 +1,61 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor and IDE files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build artifacts
+build/
+.pio/
+.pioenvs/
+.piolibdeps/
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.backup
+
+# Arduino build files
+*.elf
+*.hex
+*.bin
+
+# Compiled object files
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+
+# Dependencies
+node_modules/
+lib/
+
+# Debug files
+*.dSYM/
+
+# Package manager files
+*.lock
+
+# Documentation build
+docs/_build/
+
+# CodeQL temp files
+_codeql_detected_source_root
